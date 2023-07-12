@@ -111,6 +111,21 @@ public:
   void setCameraInfoURL(const ros::NodeHandle& nh, const std::string& camera_info_url);
 
 public:
+  // Exposure time in microseconds
+  float exposure_time_;
+
+  bool HDR_digital_clamping_;
+  bool HDR_image_enhancement_;
+  float HDR_saturation_;
+  float HDR_contrast_;
+  int HDR_brightness_;
+  float HDR_detail_;
+  int HDR_brightness_adjustement_frame_count_;
+
+  int device_stream_channel_packet_size_; 
+  int device_link_throughput_reserve_; // Limits 0-30
+  int stream_channel_packet_delay_;
+
   /** Binning factor to get downsampled images. It refers here to any camera
    * setting which combines rectangular neighborhoods of pixels into larger
    * "super-pixels." It reduces the resolution of the output image to

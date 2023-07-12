@@ -92,6 +92,19 @@ void ArenaCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
     ROS_DEBUG_STREAM("frame_rate is given and has value " << frame_rate_);
   }
 
+  nh.getParam("exposure_time", exposure_time_);
+  nh.getParam("HDR_digital_clamping", HDR_digital_clamping_);
+  nh.getParam("HDR_image_enhancement", HDR_image_enhancement_);
+  nh.getParam("HDR_saturation", HDR_saturation_);
+  nh.getParam("HDR_contrast", HDR_contrast_);
+  nh.getParam("HDR_brightness", HDR_brightness_);
+  nh.getParam("HDR_detail", HDR_detail_);
+  nh.getParam("HDR_brightness_adjustement_frame_count", HDR_brightness_adjustement_frame_count_); // 0 is 1frame averaging, 1 is 2frames averaging, 3 is 4frames averaging...
+
+  nh.getParam("device_stream_channel_packet_size", device_stream_channel_packet_size_); 
+  nh.getParam("device_link_throughput_reserve", device_link_throughput_reserve_); // Limits 0-30
+  nh.getParam("stream_channel_packet_delay", stream_channel_packet_delay_);
+
   nh.param<std::string>("camera_info_url", camera_info_url_, "");
   if (nh.hasParam("camera_info_url"))
   {
@@ -476,7 +489,8 @@ const double& ArenaCameraParameter::frameRate() const
 void ArenaCameraParameter::setFrameRate(const ros::NodeHandle& nh, const double& frame_rate)
 {
   frame_rate_ = frame_rate;
-  nh.setParam("frame_rate", frame_rate_);
+  // nh.setParam("frame_rate", frame_rate_);
+  // Do not overwrite, keep the set parameter
 }
 
 const std::string& ArenaCameraParameter::cameraInfoURL() const

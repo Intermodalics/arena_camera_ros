@@ -1,0 +1,28 @@
+# Calibration created by camera_calibration http://wiki.ros.org/camera_calibration and setting 3x3 block from P equal to K.
+
+image_width: 2880
+image_height: 1860
+camera_name: TRD054S-CC
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [2044.35953,    0.     , 1450.22551,
+            0.     , 2045.23669,  932.79174,
+            0.     ,    0.     ,    1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.312994, 0.100922, -0.000839, -0.000004, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [2044.35953,    0.     , 1450.22551,    0.     ,
+            0.     , 2045.23669,  932.79174,    0.     ,
+            0.     ,    0.     ,    1.     ,    0.     ]

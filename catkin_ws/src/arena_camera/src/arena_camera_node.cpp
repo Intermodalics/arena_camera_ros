@@ -453,30 +453,30 @@ bool ArenaCameraNode::startGrabbing()
 
     // exposure_auto_ will be already set to false if exposure_given_ is true
     // read params () solved the priority between them
-    if (arena_camera_parameter_set_.exposure_auto_)
-    {
-      Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "ExposureAuto", "Continuous");
-      // todo update parameter on the server
-      ROS_INFO_STREAM("Settings Exposure to auto/Continuous");
-    }
-    else
-    {
-      Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "ExposureAuto", "Off");
-      // todo update parameter on the server
-      ROS_INFO_STREAM("Settings Exposure to off/false");
-    }
+    // if (arena_camera_parameter_set_.exposure_auto_)
+    // {
+    //   Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "ExposureAuto", "Continuous");
+    //   // todo update parameter on the server
+    //   ROS_INFO_STREAM("Settings Exposure to auto/Continuous");
+    // }
+    // else
+    // {
+    //   Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "ExposureAuto", "Off");
+    //   // todo update parameter on the server
+    //   ROS_INFO_STREAM("Settings Exposure to off/false");
+    // }
 
-    if (arena_camera_parameter_set_.exposure_given_)
-     {
-      float reached_exposure;
-      if (setExposure(arena_camera_parameter_set_.exposure_, reached_exposure))
-      {
-        // Note: ont update the ros param because it might keep 
-        // decreasing or incresing overtime when rerun
-        ROS_INFO_STREAM("Setting exposure to " << arena_camera_parameter_set_.exposure_
-                                               << ", reached: " << reached_exposure);
-      }
-    }
+    // if (arena_camera_parameter_set_.exposure_given_)
+    //  {
+    //   float reached_exposure;
+    //   if (setExposure(arena_camera_parameter_set_.exposure_, reached_exposure))
+    //   {
+    //     // Note: ont update the ros param because it might keep 
+    //     // decreasing or incresing overtime when rerun
+    //     ROS_INFO_STREAM("Setting exposure to " << arena_camera_parameter_set_.exposure_
+    //                                            << ", reached: " << reached_exposure);
+    //   }
+    // }
 
     //
     // GAIN
@@ -484,29 +484,29 @@ bool ArenaCameraNode::startGrabbing()
     
     // gain_auto_ will be already set to false if gain_given_ is true
     // read params () solved the priority between them
-    if (arena_camera_parameter_set_.gain_auto_)
-    {
-      Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "GainAuto", "Continuous");
-      // todo update parameter on the server
-      ROS_INFO_STREAM("Settings Gain to auto/Continuous");
-    }
-    else
-    {
-      Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "GainAuto", "Off");
-      // todo update parameter on the server
-      ROS_INFO_STREAM("Settings Gain to off/false");
-    }
+    // if (arena_camera_parameter_set_.gain_auto_)
+    // {
+    //   Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "GainAuto", "Continuous");
+    //   // todo update parameter on the server
+    //   ROS_INFO_STREAM("Settings Gain to auto/Continuous");
+    // }
+    // else
+    // {
+    //   Arena::SetNodeValue<GenICam::gcstring>(pNodeMap, "GainAuto", "Off");
+    //   // todo update parameter on the server
+    //   ROS_INFO_STREAM("Settings Gain to off/false");
+    // }
 
-    if (arena_camera_parameter_set_.gain_given_)
-    {
-      float reached_gain;
-      if (setGain(arena_camera_parameter_set_.gain_, reached_gain))
-      {
-        // Note: ont update the ros param because it might keep 
-        // decreasing or incresing overtime when rerun
-        ROS_INFO_STREAM("Setting gain to: " << arena_camera_parameter_set_.gain_ << ", reached: " << reached_gain);
-      }
-    }
+    // if (arena_camera_parameter_set_.gain_given_)
+    // {
+    //   float reached_gain;
+    //   if (setGain(arena_camera_parameter_set_.gain_, reached_gain))
+    //   {
+    //     // Note: ont update the ros param because it might keep 
+    //     // decreasing or incresing overtime when rerun
+    //     ROS_INFO_STREAM("Setting gain to: " << arena_camera_parameter_set_.gain_ << ", reached: " << reached_gain);
+    //   }
+    // }
 
     //
     // GAMMA
@@ -520,6 +520,12 @@ bool ArenaCameraNode::startGrabbing()
       }
     }
 
+    setFloat("ExposureTime", arena_camera_parameter_set_.exposure_time_);
+    setHDRSettings();
+    setInteger("DeviceStreamChannelPacketSize", arena_camera_parameter_set_.device_stream_channel_packet_size_);
+    setInteger("DeviceLinkThroughputReserve", arena_camera_parameter_set_.device_link_throughput_reserve_);
+    // setEnumeration("ExposureTimeSelector", 0); // Can only select 0
+    setInteger("GevSCPD", arena_camera_parameter_set_.stream_channel_packet_delay_);
     // ------------------------------------------------------------------------
 
     //
@@ -1616,6 +1622,134 @@ bool ArenaCameraNode::setGammaCallback(camera_control_msgs::SetGamma::Request& r
                                        camera_control_msgs::SetGamma::Response& res)
 {
   res.success = setGamma(req.target_gamma, res.reached_gamma);
+  return true;
+}
+
+bool ArenaCameraNode::setHDRSettings() {
+  // first get HDR Tuning Enable and set to True if disabled.
+  GenApi::CBooleanPtr pHDRTuningEnable = pDevice_->GetNodeMap()->GetNode("HDRTuningEnable");
+  if (!pHDRTuningEnable || GenApi::IsWritable(pHDRTuningEnable)) {
+    if (!pHDRTuningEnable->GetValue()) {
+      pHDRTuningEnable->SetValue(true);
+    }
+  }
+  ROS_INFO_STREAM("HDR Tuning Enabled?: " << pHDRTuningEnable->GetValue());
+
+  // set all HDR settings
+  setBool("HDRDigitalClampingEnable", arena_camera_parameter_set_.HDR_digital_clamping_);
+  setBool("HDRImageEnhancementEnable", arena_camera_parameter_set_.HDR_image_enhancement_);
+  setFloat("HDRSaturation", arena_camera_parameter_set_.HDR_saturation_);
+  setFloat("HDRContrast", arena_camera_parameter_set_.HDR_contrast_);
+  setInteger("HDRBrightness", arena_camera_parameter_set_.HDR_brightness_);
+  setFloat("HDRDetail", arena_camera_parameter_set_.HDR_detail_);
+  setEnumeration("HDRAverageNum", arena_camera_parameter_set_.HDR_brightness_adjustement_frame_count_);
+
+  // set HDR tuning enable back to false to be able to set exposure time.
+  if (!pHDRTuningEnable || GenApi::IsWritable(pHDRTuningEnable)) {
+    if (pHDRTuningEnable->GetValue()) {
+      pHDRTuningEnable->SetValue(false);
+    }
+  }
+  return true;
+}
+
+bool ArenaCameraNode::setBool(const char* node_name, const bool& target_value) {
+  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+  return ArenaCameraNode::setBoolValue(node_name, target_value);
+}
+
+bool ArenaCameraNode::setBoolValue(const char* node_name, const bool& target_value) {
+  GenApi::CBooleanPtr pBoolSetting = pDevice_->GetNodeMap()->GetNode(node_name);
+  if (!pBoolSetting) {
+    ROS_ERROR_STREAM("No pBoolSetting for " << node_name);
+    return false;
+  } else if (!GenApi::IsWritable(pBoolSetting)) {
+    ROS_ERROR_STREAM(node_name << " not writable");
+    return false;
+  } else {
+    try {
+      pBoolSetting->SetValue(target_value);
+    }
+    catch (const GenICam::GenericException& e) {
+      ROS_ERROR_STREAM("An exception while setting " << node_name << " to " << target_value << " occurred: " << e.GetDescription());
+      return false;
+    }
+  }
+  return true;
+}
+
+bool ArenaCameraNode::setInteger(const char* node_name, const uint32_t& target_value) {
+  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+  return ArenaCameraNode::setIntegerValue(node_name, target_value);
+}
+
+bool ArenaCameraNode::setIntegerValue(const char* node_name, const uint32_t& target_value) {
+  GenApi::CIntegerPtr pIntegerSetting = pDevice_->GetNodeMap()->GetNode(node_name);
+  if (!pIntegerSetting) {
+    ROS_ERROR_STREAM("No pIntegerSetting for " << node_name);
+    return false;
+  } else if (!GenApi::IsWritable(pIntegerSetting)) {
+    ROS_ERROR_STREAM(node_name << " not writable");
+    return false;
+  } else {
+    try {
+      pIntegerSetting->SetValue(target_value);
+    }
+    catch (const GenICam::GenericException& e) {
+      ROS_ERROR_STREAM("An exception while setting " << node_name << " to " << target_value << " occurred: " << e.GetDescription());
+      return false;
+    }
+  }
+  return true;
+}
+
+bool ArenaCameraNode::setFloat(const char* node_name, const float& target_value) {
+  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+  return ArenaCameraNode::setFloatValue(node_name, target_value);
+}
+
+bool ArenaCameraNode::setFloatValue(const char* node_name, const float& target_value) {
+  GenApi::CFloatPtr pFloatSetting = pDevice_->GetNodeMap()->GetNode(node_name);
+  if (!pFloatSetting) {
+    ROS_ERROR_STREAM("No pFloatSetting for " << node_name);
+    return false;
+  } else if (!GenApi::IsWritable(pFloatSetting)) {
+    ROS_ERROR_STREAM(node_name << " not writable");
+    return false;
+  } else {
+    try {
+      pFloatSetting->SetValue(target_value);
+    }
+    catch (const GenICam::GenericException& e) {
+      ROS_ERROR_STREAM("An exception while setting " << node_name << " to " << target_value << " occurred: " << e.GetDescription());
+      return false;
+    }
+  }
+  return true;
+}
+
+bool ArenaCameraNode::setEnumeration(const char* node_name, const uint32_t& target_value) {
+  boost::lock_guard<boost::recursive_mutex> lock(grab_mutex_);
+  return ArenaCameraNode::setEnumerationValue(node_name, target_value);
+}
+
+bool ArenaCameraNode::setEnumerationValue(const char* node_name, const uint32_t& target_value) {
+  GenApi::CEnumerationPtr pEnumerationSetting = pDevice_->GetNodeMap()->GetNode(node_name);
+  if (!pEnumerationSetting) {
+    ROS_ERROR_STREAM("No pSetting for " << node_name);
+    return false;
+  } else if (!GenApi::IsWritable(pEnumerationSetting)) {
+    ROS_ERROR_STREAM(node_name << " not writable");
+    return false;
+  } else {
+    try {
+      pEnumerationSetting->SetIntValue(target_value);
+    }
+    catch (const GenICam::GenericException& e) {
+      ROS_ERROR_STREAM("An exception while setting " << node_name << " to " << target_value << " occurred: " << e.GetDescription());
+      return false;
+    }
+  }
   return true;
 }
 

@@ -274,6 +274,20 @@ protected:
   */
   bool setGammaCallback(camera_control_msgs::SetGamma::Request& req, camera_control_msgs::SetGamma::Response& res);
 
+  bool setHDRSettings();
+
+  bool setBool(const char* node_name, const bool& target_value);
+  bool setBoolValue(const char* node_name, const bool& target_value);
+  
+  bool setInteger(const char* node_name, const uint32_t& target_value);
+  bool setIntegerValue(const char* node_name, const uint32_t& target_value);
+
+  bool setFloat(const char* node_name, const float& target_value);
+  bool setFloatValue(const char* node_name, const float& target_value);
+
+  bool setEnumeration(const char* node_name, const uint32_t& target_value);
+  bool setEnumerationValue(const char* node_name, const uint32_t& target_value);
+
   /**
   * Callback that puts the camera to sleep
   * @param req request
