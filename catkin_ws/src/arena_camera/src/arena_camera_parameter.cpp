@@ -31,7 +31,7 @@
 #include <ios> // std::boolalpha 
 
 // ROS
-#include <sensor_msgs/image_encodings.h>
+#include <arena_camera/additional_image_encodings.h>
 
 // Arena node
 #include <arena_camera/arena_camera_parameter.h>

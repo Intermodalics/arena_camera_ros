@@ -30,7 +30,7 @@
 
 // ROS
 #include <ros/ros.h>
-#include <sensor_msgs/image_encodings.h>
+#include <arena_camera/additional_image_encodings.h>
 
 // Arena node
 #include <arena_camera/encoding_conversions.h>
@@ -52,15 +52,15 @@ bool ros2GenAPI(const std::string& ros_enc, std::string& gen_api_enc)
   {
     gen_api_enc = "Mono16";
   }
-  else if (ros_enc == sensor_msgs::image_encodings::CONFIDENCE16)
+  else if (ros_enc == image_encodings::CONFIDENCE16)
   {
     gen_api_enc = "Confidence16";
   }
-  else if (ros_enc == sensor_msgs::image_encodings::COORD3D_ABC16)
+  else if (ros_enc == image_encodings::COORD3D_ABC16)
   {
     gen_api_enc = "Coord3D_ABC16";
   }
-  else if (ros_enc == sensor_msgs::image_encodings::COORD3D_ABCY16)
+  else if (ros_enc == image_encodings::COORD3D_ABCY16)
   {
     gen_api_enc = "Coord3D_ABCY16";
   }

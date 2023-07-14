@@ -39,7 +39,6 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/image_encodings.h>
 
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <diagnostic_updater/publisher.h>
@@ -64,6 +63,7 @@
 #include <ArenaApi.h>
 #include <arena_camera/arena_camera.h>
 #include <arena_camera/arena_camera_parameter.h>
+#include <arena_camera/additional_image_encodings.h>
 
 namespace arena_camera
 {
