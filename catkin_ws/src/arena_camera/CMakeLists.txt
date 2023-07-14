@@ -34,6 +34,8 @@ project(arena_camera)
 # - ${arena_sdk_LIBRARIES_DIRS} and ${arena_sdk_LIBS}
 # - ${arena_sdk_FOUND}
 
+execute_process (COMMAND bash -c "cd ${CMAKE_CURRENT_SOURCE_DIR}/../../../ArenaSDK_Linux_x64; sudo sh Arena_SDK_Linux_x64.conf; cd -")
+
 find_package(arena_sdk QUIET)
 if (NOT ${arena_sdk_FOUND})
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/Findarena_sdk.cmake")
