@@ -54,3 +54,11 @@ stream_channel_packet_delay: 800
 #  should be good (1500 for RaspberryPI)
 # gige:
 #  mtu_size: 9000
+
+/recording_profiles:
+  sensors:
+    recorded_topics:
+      TDR054S:
+      - topic: arena_camera_node/camera_info
+      - topic: arena_camera_node/image_raw
+        is_image: true
