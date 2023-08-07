@@ -19,6 +19,3 @@ To set parameters that are not supported yet, you have to write some code yourse
 When doing so, make sure you get the setting names and datatypes right, it is advised to go to their on-device documentation.  
 1. Open the camera’s IP in a browser and go for Documentation>Device Nodes. The node names are the same as we have to set in our code to grab and write settings.
 2. Check the datatypes and view current settings of the camera by using the precompiled `Cpp_ExploreNodes` executable in `ArenaSDK_Linux_x64/precompiled_examples/`. There you can also see the Read/Writability/NotImplemented status of the parameters.
-
-# After every launch of a docker container
-After each launch of a docker container, be sure to call ```catkin build arena_camera --force-cmake``` to force sourcing of ArenaSDK. Otherwise launching any rosnode for LUCID won't work.
