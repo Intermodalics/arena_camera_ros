@@ -35,6 +35,17 @@ project(arena_camera)
 # - ${arena_sdk_FOUND}
 
 execute_process (COMMAND bash -c "cd ${CMAKE_CURRENT_SOURCE_DIR}/../../../ArenaSDK_Linux_x64; sudo sh Arena_SDK_Linux_x64.conf; cd -")
+file(GLOB arena_sdk_LIBRARIES
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../../ArenaSDK_Linux_x64/lib64/*"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../../../ArenaSDK_Linux_x64/GenICam/library/lib/Linux64_x64/*.so"
+)
+foreach(_lib ${arena_sdk_LIBRARIES})
+  get_filename_component(_lib_basename "${_lib}" NAME)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${_lib}
+    ${CATKIN_DEVEL_PREFIX}/lib/${_lib_basename}
+  )
+endforeach()
 
 find_package(arena_sdk QUIET)
 if (NOT ${arena_sdk_FOUND})
